@@ -1,18 +1,55 @@
-#include <"mpi.h">
+#include <stdio.h>
+#include <mpi.h>
 
+int main() {
 
-int world_rank;
-MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-int world_size;
-MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    double startTime = MPI_Wtime();
 
-int number;
-if (world_rank == 0) {
-    number = -1;
-    MPI_Send(&number, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
-} else if (world_rank == 1) {
-    MPI_Recv(&number, 1, MPI_INT, 0, 0, MPI_COMM_WORLD,
-             MPI_STATUS_IGNORE);
-    printf("Process 1 received number %d from process 0\n",
-           number);
+    MPI_Init(NULL, NULL);
+
+    int world_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    int message = 1;
+    int maxIterations = 100;
+
+    int messageSize = 2;
+    char* buffer = new char[messageSize];
+
+    for (int iteration=0; iteration < maxIterations; iteration++) {
+    
+        if (world_rank == 0) {
+            
+            // Ping
+            MPI_Send(&buffer, 1, MPI_UNSIGNED_CHAR, 1, 0, MPI_COMM_WORLD);
+            printf("Process 0 Sent Message %d To Process 1\n", message);
+
+            // 2nd Pong
+            MPI_Recv(&buffer, 1, MPI_UNSIGNED_CHAR, 1, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            printf("Process 0 Received Message %d From Process 1\n", message);
+        } 
+        else if (world_rank == 1) {
+            
+            // Pong
+            MPI_Recv(&buffer, 1, MPI_UNSIGNED_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            printf("Process 1 Received Message %d From Process 0\n", message);
+
+            // 2nd Ping
+            MPI_Send(&buffer, 1, MPI_UNSIGNED_CHAR, 0, 1, MPI_COMM_WORLD);
+
+            printf("Process 1 Sent Message %d To Process 0\n", message);
+        }
+    }   
+    
+    MPI_Finalize();
+
+    double endTime = MPI_Wtime();
+    double totalTime = endTime - startTime;
+
+    if (world_rank == 0) {
+        printf("\nTotal Time: %d \n", totalTime);
+    }
+
 }
