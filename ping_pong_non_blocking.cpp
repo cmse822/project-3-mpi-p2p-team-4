@@ -1,5 +1,6 @@
-#include <stdio.h>
 #include <mpi.h>
+#include <fstream>
+#include <iostream>
 
 
 int main() {
@@ -57,9 +58,35 @@ int main() {
 
     double endTime = MPI_Wtime();
     double totalTime = endTime - startTime;
+    //Output results to csv file 
 
-    if (world_rank == 0) {
+    if (world_rank == 0 ) {
+
         printf("\nTotal Time: %lf \n", totalTime);
+
+        const char* csvfile = "non_blocking.csv";
+
+        std::ifstream infile(csvfile);
+         //check if file is empty
+        bool is_empty = infile.peek() == std::ifstream::traits_type::eof();
+        infile.close();
+
+        // Open the CSV file for writing (appending mode)
+        std::ofstream file(csvfile, std::ios_base::app); // app = append mode
+
+        // Write header if the file is empty
+        if (is_empty) {
+            file << "message size, Iterations, Time" << std::endl;
+        }
+
+        // Write results to the CSV file
+        if (file.is_open()) {
+            file << messageSize << ',' << maxIterations << ',' << totalTime << std::endl;
+            file.close();
+        } else {
+            std::cerr << "Error: Unable to open file for writing." << std::endl;
+        }
+
     }
 
 }
