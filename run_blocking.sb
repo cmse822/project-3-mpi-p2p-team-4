@@ -28,12 +28,21 @@ module load GCC/10.3.0 OpenMPI/4.1.1
 # Run our job
 csv_file_name='ping_pong_blocking.csv'
 
-for p in "${processors[@]}"; do
-    srun -n $p par_pi_q4.exe $d $csv_file_name
+executable_name = 'ping_pong_blocking.out'
+
+# Message size
+max_power = 12
+message_size_array=()
+for ((power=0; power<=max_power; power++)); do
+    message_size=$((2**power))
+    message_size_array+=($message_size)
 done
 
-# TODO: Change to mpiexec
+# Run Executables
+for message_size in "${message_size_array[@]}"; do
+    srun -n 2 $executable_name $csv_file_name
+done
 
-# Print resource information
+# Print Resource Information
 scontrol show job $SLURM_JOB_ID
 js -j $SLURM_JOB_ID

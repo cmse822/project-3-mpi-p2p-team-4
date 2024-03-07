@@ -47,7 +47,7 @@ int main() {
     double totalTime = endTime - startTime;
 
     if (world_rank == 0) {
-        printf("\nTotal Time: %d \n", totalTime);
+        printf("\nTotal Time: %lf \n", totalTime);
     }
 
 }
