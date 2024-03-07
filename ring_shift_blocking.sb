@@ -1,6 +1,6 @@
 #!/bin/bash --login
 # Job name:
-#SBATCH --job-name=ping-pong-blocking
+#SBATCH --job-name=ring_shift_blocking
 
 max_num_nodes=64
 
@@ -28,9 +28,9 @@ module purge
 module load GCC/10.3.0 OpenMPI/4.1.1
 
 # Run our job
-csv_file_name='ping_pong_blocking.csv'
+csv_file_name='ring_shift_blocking.csv'
 
-executable_name = 'ping_pong_blocking.out'
+executable_name = 'ring_shift_blocking.out'
 
 # Message size
 max_power_message_size = 12
@@ -40,7 +40,7 @@ for ((power=0; power<=max_power; power++)); do
 done
 
 # Number of Processors
-max_power_num_processors = 1  # If blocking then set = 1. If Ring Shift then set >1 
+max_power_num_processors = $max_num_nodes
 processors=()
 for ((power=0; power<=max_power; power++)); do
     processors+=($((2**power)))
