@@ -1,6 +1,6 @@
 #!/bin/bash --login
 # Job name:
-#SBATCH --job-name=ping-pong-blocking
+#SBATCH --job-name=ping-pong-nonblocking
 
 # Number of nodes
 #SBATCH --nodes=2
