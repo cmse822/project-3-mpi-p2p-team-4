@@ -2,8 +2,10 @@
 # Job name:
 #SBATCH --job-name=ping-pong-blocking
 
+max_num_nodes=64
+
 # Number of nodes
-#SBATCH --nodes=2
+#SBATCH --nodes=$max_num_nodes
 
 # Number of tasks to run on each node
 #SBATCH --ntasks-per-node=1
@@ -28,12 +30,29 @@ module load GCC/10.3.0 OpenMPI/4.1.1
 # Run our job
 csv_file_name='ping_pong_blocking.csv'
 
-for p in "${processors[@]}"; do
-    srun -n $p par_pi_q4.exe $d $csv_file_name
+executable_name = 'ping_pong_blocking.out'
+
+# Message size
+max_power_message_size = 12
+message_sizes=()
+for ((power=0; power<=max_power; power++)); do
+    message_sizes+=($((2**power)))
 done
 
-# TODO: Change to mpiexec
+# Number of Processors
+max_power_num_processors = 1  # If blocking then set = 1. If Ring Shift then set >1 
+processors=()
+for ((power=0; power<=max_power; power++)); do
+    processors+=($((2**power)))
+done
 
-# Print resource information
+# Run Executables
+for p in "${processors}"; do
+    for message_size in "${message_size_array[@]}"; do
+        srun -n $p $executable_name $message_size $csv_file_name
+    done
+done
+
+# Print Resource Information
 scontrol show job $SLURM_JOB_ID
 js -j $SLURM_JOB_ID
