@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
 
     double startTime = MPI_Wtime();
 
-    MPI_Init(int argc, char *argv[]);
+    MPI_Init(&argc, &argv);
 
     // request object for non-blocking communication
     MPI_Request request_s0, request_r0, request_r1, request_s1;
@@ -18,10 +18,13 @@ int main(int argc, char *argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
     int maxIterations = 100;
-    int messageSize = 2;
+    // int messageSize = 2;
     int messageSize = atoi(argv[1]);
     char* message = new char[messageSize];
-    const char* csvfile = argv[0];
+    const char* csvfile = argv[2];
+
+    // printf("message size %d \n", messageSize);
+    // printf("csvfile %s \n", csvfile);
 
     for (int iteration=0; iteration < maxIterations; iteration++) {
     
