@@ -3,11 +3,11 @@
 #include <iostream>
 
 
-int main() {
+int main(int argc, char *argv[]) {
 
     double startTime = MPI_Wtime();
 
-    MPI_Init(NULL, NULL);
+    MPI_Init(int argc, char *argv[]);
 
     // request object for non-blocking communication
     MPI_Request request_s0, request_r0, request_r1, request_s1;
@@ -19,7 +19,9 @@ int main() {
 
     int maxIterations = 100;
     int messageSize = 2;
+    int messageSize = atoi(argv[1]);
     char* message = new char[messageSize];
+    const char* csvfile = argv[0];
 
     for (int iteration=0; iteration < maxIterations; iteration++) {
     
@@ -64,7 +66,7 @@ int main() {
 
         printf("\nTotal Time: %lf \n", totalTime);
 
-        const char* csvfile = "non_blocking.csv";
+        // const char* csvfile = "non_blocking.csv";
 
         std::ifstream infile(csvfile);
          //check if file is empty
