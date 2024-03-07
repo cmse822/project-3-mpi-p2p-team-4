@@ -1,0 +1,39 @@
+#!/bin/bash --login
+# Job name:
+#SBATCH --job-name=ping-pong-blocking
+
+# Number of nodes
+#SBATCH --nodes=2
+
+# Number of tasks to run on each node
+#SBATCH --ntasks-per-node=1
+
+# Memory per Node
+# Specify "M" or "G" for MB and GB respectively
+#SBATCH --mem=1G
+
+# Wall time
+# Format: "minutes", "hours:minutes:seconds", 
+# "days-hours", or "days-hours:minutes"
+#SBATCH --time=01:00:00
+
+# Standard output and error to file
+# %x: job name, %j: job ID
+#SBATCH --output=%x-%j.SLURMout
+
+# Purge current modules and load those we require
+module purge
+module load GCC/10.3.0 OpenMPI/4.1.1
+
+# Run our job
+csv_file_name='ping_pong_blocking.csv'
+
+for p in "${processors[@]}"; do
+    srun -n $p par_pi_q4.exe $d $csv_file_name
+done
+
+# TODO: Change to mpiexec
+
+# Print resource information
+scontrol show job $SLURM_JOB_ID
+js -j $SLURM_JOB_ID
