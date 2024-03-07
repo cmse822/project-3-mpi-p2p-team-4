@@ -2,10 +2,8 @@
 # Job name:
 #SBATCH --job-name=ping-pong-blocking
 
-max_num_nodes=64
-
 # Number of nodes
-#SBATCH --nodes=$max_num_nodes
+#SBATCH --nodes=2
 
 # Number of tasks to run on each node
 #SBATCH --ntasks-per-node=1
@@ -39,18 +37,9 @@ for ((power=0; power<=max_power; power++)); do
     message_sizes+=($((2**power)))
 done
 
-# Number of Processors
-max_power_num_processors = 1  # If blocking then set = 1. If Ring Shift then set >1 
-processors=()
-for ((power=0; power<=max_power; power++)); do
-    processors+=($((2**power)))
-done
-
 # Run Executables
-for p in "${processors}"; do
-    for message_size in "${message_size_array[@]}"; do
-        srun -n $p $executable_name $message_size $csv_file_name
-    done
+for message_size in "${message_size_array[@]}"; do
+    srun -n 2 ping_pong_blocking.out $message_size $csv_file_name
 done
 
 # Print Resource Information
