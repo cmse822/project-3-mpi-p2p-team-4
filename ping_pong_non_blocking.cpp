@@ -23,8 +23,8 @@ int main(int argc, char *argv[]) {
     char* message = new char[messageSize];
     const char* csvfile = argv[2];
 
-    // printf("message size %d \n", messageSize);
-    // printf("csvfile %s \n", csvfile);
+    printf("message size %d \n", messageSize);
+    printf("csvfile %s \n", csvfile);
 
     for (int iteration=0; iteration < maxIterations; iteration++) {
     
@@ -81,12 +81,12 @@ int main(int argc, char *argv[]) {
 
         // Write header if the file is empty
         if (is_empty) {
-            file << "message size, Iterations, Time" << std::endl;
+            file << "processors, message size, Time" << std::endl;
         }
 
         // Write results to the CSV file
         if (file.is_open()) {
-            file << messageSize << ',' << maxIterations << ',' << totalTime << std::endl;
+            file << world_size << ',' << messageSize << ',' << totalTime << std::endl;
             file.close();
         } else {
             std::cerr << "Error: Unable to open file for writing." << std::endl;

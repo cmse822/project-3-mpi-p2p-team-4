@@ -28,22 +28,23 @@ module load GCC/10.3.0 OpenMPI/4.1.1
 # Run our job
 csv_file_name='ping_pong_nonblocking.csv'
 
-executable_name = 'ping_pong_nonblocking.out'
+executable_name='ping_pong_nonblocking.out'
+
+mpicxx ping_pong_non_blocking.cpp -o $executable_name
 
 # Message size
-max_power_message_size = 12
+max_power_message_size=12
 message_sizes=()
-for ((power=0; power<=max_power; power++)); do
+for ((power=0; power<=max_power_message_size; power++)); do
     message_sizes+=($((2**power)))
 done
-
 # Run Executables
-for p in "${processors}"; do
-    for message_size in "${message_size_array[@]}"; do
+for i in {1..5}; do #5 trials for each message size
+    for message_size in "${message_sizes[@]}"; do
         srun -n 2 $executable_name $message_size $csv_file_name
     done
 done
 
 # Print Resource Information
-scontrol show job $SLURM_JOB_ID
-js -j $SLURM_JOB_ID
+# scontrol show job $SLURM_JOB_ID
+# js -j $SLURM_JOB_ID
