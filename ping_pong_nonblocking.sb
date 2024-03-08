@@ -33,7 +33,7 @@ executable_name='ping_pong_nonblocking.out'
 mpicxx ping_pong_non_blocking.cpp -o $executable_name
 
 # Message size
-max_power_message_size=12
+max_power_message_size=24
 message_sizes=()
 for ((power=0; power<=max_power_message_size; power++)); do
     message_sizes+=($((2**power)))

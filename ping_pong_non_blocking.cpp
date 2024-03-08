@@ -23,8 +23,8 @@ int main(int argc, char *argv[]) {
     char* message = new char[messageSize];
     const char* csvfile = argv[2];
 
-    printf("message size %d \n", messageSize);
-    printf("csvfile %s \n", csvfile);
+    // printf("message size %d \n", messageSize);
+    // printf("csvfile %s \n", csvfile);
 
     for (int iteration=0; iteration < maxIterations; iteration++) {
     
