@@ -10,6 +10,9 @@ int main(int argc, char* argv[]) {
     }
 
     int messageSize = atoi(argv[1]);
+
+    printf("message size %lld \n", messageSize);
+    
     if (messageSize <= 0) {
         fprintf(stderr, "messageSize must be a positive integer\n");
         return 1;
@@ -25,9 +28,13 @@ int main(int argc, char* argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
     int maxIterations = 100;
-    char* message = new char[messageSize];
+
+    char* message = (char*)malloc(messageSize);
+    char* recbuf = (char*)malloc(messageSize);
 
     const char* csvfile = argv[2];
+
+    printf("csvfile %s \n", csvfile);
 
     // printf("message size %d \n", messageSize);
     // printf("csvfile %s \n", csvfile);
@@ -37,21 +44,21 @@ int main(int argc, char* argv[]) {
         if (world_rank == 0) {
             
             // Ping
-            MPI_Send(message, messageSize, MPI_CHAR, 1, 0, MPI_COMM_WORLD);
+            MPI_Send(message, messageSize, MPI_UNSIGNED_CHAR, 1, 0, MPI_COMM_WORLD);
             // printf("Process 0 Sent Message To Process 1\n");
 
             // 2nd Pong
-            MPI_Recv(message, messageSize, MPI_CHAR, 1, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            MPI_Recv(recbuf, messageSize, MPI_UNSIGNED_CHAR, 1, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             // printf("Process 0 Received Message From Process 1\n");
         } 
         else if (world_rank == 1) {
             
             // Pong
-            MPI_Recv(message, messageSize, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            MPI_Recv(recbuf, messageSize, MPI_UNSIGNED_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             // printf("Process 1 Received Message From Process 0\n");
 
             // 2nd Ping
-            MPI_Send(message, messageSize, MPI_CHAR, 0, 1, MPI_COMM_WORLD);
+            MPI_Send(message, messageSize, MPI_UNSIGNED_CHAR, 0, 1, MPI_COMM_WORLD);
             // printf("Process 1 Sent Message To Process 0\n");
         }
     }   

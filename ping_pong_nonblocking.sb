@@ -10,7 +10,7 @@
 
 # Memory per Node
 # Specify "M" or "G" for MB and GB respectively
-#SBATCH --mem=1G
+#SBATCH --mem=8G
 
 # Wall time
 # Format: "minutes", "hours:minutes:seconds", 
@@ -32,12 +32,17 @@ executable_name='ping_pong_nonblocking.out'
 
 mpicxx ping_pong_non_blocking.cpp -o $executable_name
 
-# Message size
-max_power_message_size=24
+
+max_power_message_size=30  # Maximum power of 2 desired
 message_sizes=()
-for ((power=0; power<=max_power_message_size; power++)); do
+
+for ((power=20; power<=max_power_message_size; power++)); do
     message_sizes+=($((2**power)))
 done
+
+# Print the message sizes
+echo "${message_sizes[@]}"
+
 # Run Executables
 for i in {1..5}; do #5 trials for each message size
     for message_size in "${message_sizes[@]}"; do

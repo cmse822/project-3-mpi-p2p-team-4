@@ -33,11 +33,14 @@ executable_name='ping_pong_blocking.out'
 mpicxx ping_pong_blocking.cpp -o $executable_name
 
 # Message size
-max_power_message_size=24
+max_power_message_size=30
 message_sizes=()
-for ((power=0; power<=max_power_message_size; power++)); do
+for ((power=20; power<=max_power_message_size; power++)); do
     message_sizes+=($((2**power)))
 done
+
+# Print the message sizes
+echo "${message_sizes[@]}"
 
 # Run Executables
 for i in {1..5}; do #5 trials for each message size
