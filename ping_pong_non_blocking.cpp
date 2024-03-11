@@ -18,13 +18,25 @@ int main(int argc, char *argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
     int maxIterations = 100;
-    // int messageSize = 2;
+    // int messageSize = 4073741824;
+
+    // get cmd args 
+
     int messageSize = atoi(argv[1]);
-    char* message = new char[messageSize];
     const char* csvfile = argv[2];
 
-    // printf("message size %d \n", messageSize);
-    // printf("csvfile %s \n", csvfile);
+
+    printf("message size %lld \n", messageSize);
+    printf("csvfile %s \n", csvfile);
+    
+    // char* message = new char[messageSize];
+    char* message = (char*)malloc(messageSize);
+    char* recbuf = (char*)malloc(messageSize);
+
+    if (message == NULL) {
+        fprintf(stderr, "Failed to allocate memory\n");
+        MPI_Abort(MPI_COMM_WORLD, 1); // Abort MPI execution
+    }
 
     for (int iteration=0; iteration < maxIterations; iteration++) {
     
@@ -34,9 +46,9 @@ int main(int argc, char *argv[]) {
             MPI_Request req[2];
             
             // Ping
-            MPI_Isend(&message, 1, MPI_UNSIGNED_CHAR, 1, 0, MPI_COMM_WORLD, &req[0]);
+            MPI_Isend(message, messageSize, MPI_UNSIGNED_CHAR, 1, 0, MPI_COMM_WORLD, &req[0]);
 
-            MPI_Irecv(&message, 1, MPI_UNSIGNED_CHAR, 1, 1, MPI_COMM_WORLD,&req[1]);
+            MPI_Irecv(recbuf, messageSize, MPI_UNSIGNED_CHAR, 1, 1, MPI_COMM_WORLD,&req[1]);
             
             MPI_Waitall(2,req,MPI_STATUS_IGNORE);
 
@@ -48,9 +60,9 @@ int main(int argc, char *argv[]) {
             // Pong
             MPI_Request req[2];
 
-            MPI_Irecv(&message, 1, MPI_UNSIGNED_CHAR, 0, 0, MPI_COMM_WORLD, &req[0]);
+            MPI_Irecv(recbuf, messageSize, MPI_UNSIGNED_CHAR, 0, 0, MPI_COMM_WORLD, &req[0]);
 
-            MPI_Isend(&message, 1, MPI_UNSIGNED_CHAR, 0, 1, MPI_COMM_WORLD,&req[1]);
+            MPI_Isend(message, messageSize, MPI_UNSIGNED_CHAR, 0, 1, MPI_COMM_WORLD,&req[1]);
 
             MPI_Waitall(2,req,MPI_STATUS_IGNORE);
 
@@ -59,7 +71,11 @@ int main(int argc, char *argv[]) {
         }
     }   
     
+    
     MPI_Finalize();
+    
+    free(message);
+    free(recbuf);
 
     double endTime = MPI_Wtime();
     double totalTime = endTime - startTime;
