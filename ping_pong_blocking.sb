@@ -42,6 +42,7 @@ done
 # Run Executables
 for i in {1..5}; do #5 trials for each message size
     for message_size in "${message_sizes[@]}"; do
+        echo 'Starting ping pong blocking with {$message_size} bytes of data'
         srun -n 2 $executable_name $message_size $csv_file_name
     done
 done
