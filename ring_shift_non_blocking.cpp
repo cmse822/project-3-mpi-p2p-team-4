@@ -39,11 +39,11 @@ int main(int argc, char* argv[]) {
             MPI_Request req[2];
 
             // Send message to the next rank (1)
-            MPI_Isend(&message, messageSize, MPI_UNSIGNED_CHAR, world_rank + 1, 0, MPI_COMM_WORLD, &req[0]);
+            MPI_Isend(message, messageSize, MPI_UNSIGNED_CHAR, world_rank + 1, 0, MPI_COMM_WORLD, &req[0]);
             printf("Process 0 Sent Message %p To Process 1\n", message);
 
             // Receives message from the last rank, completing the ring
-            MPI_Irecv(&message, messageSize, MPI_UNSIGNED_CHAR, world_size - 1, 0, MPI_COMM_WORLD, &req[1]);
+            MPI_Irecv(recbuf, messageSize, MPI_UNSIGNED_CHAR, world_size - 1, 0, MPI_COMM_WORLD, &req[1]);
             printf("Process 0 Received Message %d From Process %d\n", message, world_size-1);
 
             MPI_Waitall(2, req, MPI_STATUS_IGNORE);
@@ -52,16 +52,16 @@ int main(int argc, char* argv[]) {
             MPI_Request req[2];
 
             // Receieves message from the previous rank
-            MPI_Irecv(&message, messageSize, MPI_UNSIGNED_CHAR, world_rank - 1, 0, MPI_COMM_WORLD, &req[0]);
+            MPI_Irecv(recbuf, messageSize, MPI_UNSIGNED_CHAR, world_rank - 1, 0, MPI_COMM_WORLD, &req[0]);
             printf("Process %d Received Message %d From Process %d\n", world_rank, message, world_rank - 1);
 
             if (world_rank == world_size - 1) {
                 // Final rank should send message to rank 0, completing the ring
-                MPI_Isend(&message, messageSize, MPI_UNSIGNED_CHAR, 0, 0, MPI_COMM_WORLD, &req[1]);
+                MPI_Isend(message, messageSize, MPI_UNSIGNED_CHAR, 0, 0, MPI_COMM_WORLD, &req[1]);
                 printf("Process %d Sent Message %d To Process %d\n", world_rank, message, 0);
             } else {
                 // All the other ranks send message to the next rank 
-                MPI_Isend(&message, messageSize, MPI_UNSIGNED_CHAR, world_rank + 1, 0, MPI_COMM_WORLD, &req[1]);
+                MPI_Isend(message, messageSize, MPI_UNSIGNED_CHAR, world_rank + 1, 0, MPI_COMM_WORLD, &req[1]);
                 printf("Process %d Sent Message %d To Process %d\n", world_rank, message, world_rank + 1);
             }
 
