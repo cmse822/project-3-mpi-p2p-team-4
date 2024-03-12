@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     int world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
 
-    int maxIterations = 100;
+    int maxIterations = 1;
 
     char* message = (char*)malloc(messageSize);
     char* recbuf = (char*)malloc(messageSize);
