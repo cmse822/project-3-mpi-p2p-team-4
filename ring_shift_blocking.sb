@@ -30,7 +30,7 @@ module load GCC/10.3.0 OpenMPI/4.1.1
 # Run our job
 csv_file_name='ring_shift_blocking.csv'
 
-executable_name = 'ring_shift_blocking.out'
+executable_name = 'ring_shift_blocking.exe'
 
 # Message size
 max_power_message_size = 12
@@ -40,9 +40,9 @@ for ((power=0; power<=max_power; power++)); do
 done
 
 # Number of Processors
-max_power_num_processors = $max_num_nodes
+max_power_num_processors = 6
 processors=()
-for ((power=0; power<=max_power; power++)); do
+for ((power=1; power<=max_power; power++)); do
     processors+=($((2**power)))
 done
 
