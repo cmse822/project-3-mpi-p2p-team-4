@@ -2,22 +2,20 @@
 # Job name:
 #SBATCH --job-name=ring_shift_nonblocking
 
-max_num_nodes=64
-
 # Number of nodes
-#SBATCH --nodes=$max_num_nodes
+#SBATCH --nodes=64
 
 # Number of tasks to run on each node
 #SBATCH --ntasks-per-node=1
 
 # Memory per Node
 # Specify "M" or "G" for MB and GB respectively
-#SBATCH --mem=1G
+#SBATCH --mem=2G
 
 # Wall time
 # Format: "minutes", "hours:minutes:seconds", 
 # "days-hours", or "days-hours:minutes"
-#SBATCH --time=01:00:00
+#SBATCH --time=05:00:00
 
 # Standard output and error to file
 # %x: job name, %j: job ID
@@ -30,29 +28,30 @@ module load GCC/10.3.0 OpenMPI/4.1.1
 # Run our job
 csv_file_name='ring_shift_nonblocking.csv'
 
-executable_name = 'ring_shift_nonblocking.exe'
+executable_name='ring_shift_non_blocking.exe'
 
 # Message size
-max_power_message_size = 12
+max_power_message_size=30
 message_sizes=()
-for ((power=0; power<=max_power; power++)); do
+for ((power=0; power<=max_power_message_size; power++)); do
     message_sizes+=($((2**power)))
 done
 
 # Number of Processors
-max_power_num_processors = 6
+max_power_num_processors=6
+
 processors=()
-for ((power=0; power<=max_power; power++)); do
+for ((power=1; power<=max_power_num_processors; power++)); do
     processors+=($((2**power)))
 done
 
 # Run Executables
-for p in "${processors}"; do
-    for message_size in "${message_size_array[@]}"; do
+for p in "${processors[@]}"; do
+    for message_size in "${message_sizes[@]}"; do
         srun -n $p $executable_name $message_size $csv_file_name
     done
 done
 
 # Print Resource Information
-scontrol show job $SLURM_JOB_ID
-js -j $SLURM_JOB_ID
+# scontrol show job $SLURM_JOB_ID
+# js -j $SLURM_JOB_ID
