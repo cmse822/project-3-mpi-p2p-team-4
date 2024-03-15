@@ -11,6 +11,8 @@ The "ring shift" problem is similar to ping-pong. In the MPI ring shift, a group
 
 Your task is to implement the ping-pong problem using MPI in C or C++ and analyze the behavior and performance of your code. Specifically, you should:
 
+Implemented in `ping_pong_blocking.cpp`
+
 1. Implement the ping-pong problem using MPI in C or C++. Use blocking `MPI_Send()` and `MPI_Recv()` calls. You should define the number of iterations and the size of the message to be exchanged.
 2. Measure the time taken to complete the ping-pong exchange for different message sizes. You should use the `MPI_Wtime()` function to obtain the time before and after the exchange and calculate the elapsed time. Vary the message size from 2 bytes to 4 kilobytes in powers of 2 (i.e., 2 bytes, 4 bytes, 8 bytes,..., 2048 bytes, 4096 bytes). For each message size, perform 100 iterations of the ping-pong to build up statistical significance.
 3. Record the total amount of data sent and received during the ping-pong exchange for each configuration.
@@ -18,6 +20,10 @@ Your task is to implement the ping-pong problem using MPI in C or C++ and analyz
 5. Plot the average communication time of a single exchange (send and receive) as a function of message size for the two cases. Using this plot, estimate the _latency_ and _bandwidth_ for each case. Are they different? Explain your results.
 6. Analyze and discuss your results. Explain the behavior of the resulting curves.
  - The time per exchange is approximately constant versus message size until about 2^24 bytes. The "plateau" region, where the time per exchange is constant, represents the latency of the communication. This portion of the graph is dominated by the overhead associated with the MPI communication. Beyond 2^24 bytes, the time per exchange increases with message size. For larger message sizes (>2^24 bytes), the communication is bandwidth limited, rather than limited by the latency and initial overhead of the MPI communication. Since the bandwidth represents the maximum rate at which data can be exchanged, we see an increase in the communication time with increasing message size for large message sizes. 
+
+![Alt text](./AveragePingPongTime.png)
+
+
 
 ## Part 2: Non-block Ping-Pong
 
