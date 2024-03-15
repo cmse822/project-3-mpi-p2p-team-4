@@ -17,6 +17,7 @@ Your task is to implement the ping-pong problem using MPI in C or C++ and analyz
 4. Repeat steps 2 and 3 but ensure that the 2 processes that are communicating reside on different physical hardware nodes on HPCC.
 5. Plot the average communication time of a single exchange (send and receive) as a function of message size for the two cases. Using this plot, estimate the _latency_ and _bandwidth_ for each case. Are they different? Explain your results.
 6. Analyze and discuss your results. Explain the behavior of the resulting curves.
+ - The time per exchange is approximately constant versus message size until about 2^24 bytes. The "plateau" region, where the time per exchange is constant, represents the latency of the communication. This portion of the graph is dominated by the overhead associated with the MPI communication. Beyond 2^24 bytes, the time per exchange increases with message size. For larger message sizes (>2^24 bytes), the communication is bandwidth limited, rather than limited by the latency and initial overhead of the MPI communication. Since the bandwidth represents the maximum rate at which data can be exchanged, we see an increase in the communication time with increasing message size for large message sizes. 
 
 ## Part 2: Non-block Ping-Pong
 
@@ -28,6 +29,7 @@ Repeat Part 1 using non-blocking MPI communication, i.e., using `MPI_Isend()` an
 2. As in Parts 1 and 2, vary the message size from 2 bytes to 4 kb, in powers of 2. Also vary the number of processes used from 2 to `N`, in powers of 2, where `N` is sufficiently large that rank 0 and rank `N-1` are guaranteed to reside on separate nodes (`N` will depend on which cluster you are using on HPCC).
 3. Compute the bandwidth and latency, as above. Plot the bandwidth as a function of message size. Include separate lines for each number of processes used. 
 4. Analyze and discuss your results. Explain the behavior of the resulting curves.
+ - The results of both non-blocking and blocking communication for the ping-ping exchange are shown in the same plot. Within the latency/overhead limited region, the time per exchange is approximately the same for both blocking and non-blocking communication. Within the bandwidth-limited region (>2^24 bytes), the non-blocking communication is faster than the blocking communication. Non-blocking communication allows for the overlap of communication and computation, meaning each task can proceed regardless of the communication status of its outgoing/incoming message. Blocking communication requires the synchronization of send and receive calls, meaning computation cannot overlap with communication. Therefore, non-blocking communication is expected to be faster than blocking communication. 
 
 ## Part 4: Non-blocking MPI Ring Shift
 
